@@ -42,6 +42,7 @@ class Gogo():
     def __init__(self, size=(640, 480)):
         self.size = size
         self.clock = pygame.time.Clock()
+        self.space_group = pygame.sprite.Group()
         self.working = True
         self.thread = threading.Thread(target=self.gogo)
         self.thread.start()
@@ -62,7 +63,6 @@ class Gogo():
             self.im[d][i] = pygame.image.load(f"{d}/{i}").convert_alpha()
 
         self.nobby=Thing([self.im["image/purple"][i] for i in self.im["image/purple"]])
-        self.space_group = pygame.sprite.Group()
         self.space_group.add(self.nobby)
 
         while self.get_working():
