@@ -29,8 +29,6 @@ class Thing(pygame.sprite.Sprite):
         #self.rect.move_ip(self.x, self.y)
 
 
-pygame.init()
-
 
 
 
@@ -42,27 +40,28 @@ class Gogo():
         self.clock = pygame.time.Clock()
         self.working = True
         self.thread = threading.Thread(target=self.gogo)
-        if DEBUG: print('starting thread')
         self.thread.start()
 
     def get_working(self):
         return self.working
 
     def gogo(self):
+    
+    
         print('gogo')
         pygame.init()
         self.screen = pygame.display.set_mode(self.size)
 
 
-        im = {}
+        self.im = {}
         d = "image/purple"
-        im[d] = {}
+        self.im[d] = {}
         for i in os.listdir(d):
-            im[d][i] = pygame.image.load(f"{d}/{i}").convert_alpha()
+            self.im[d][i] = pygame.image.load(f"{d}/{i}").convert_alpha()
 
-        nobby=Thing([im["image/purple"][i] for i in im["image/purple"]])
-        space_group = pygame.sprite.Group()
-        space_group.add(nobby)
+        self.nobby=Thing([self.im["image/purple"][i] for i in self.im["image/purple"]])
+        self.space_group = pygame.sprite.Group()
+        self.space_group.add(self.nobby)
 
         while self.get_working():
             for event in pygame.event.get():
@@ -71,20 +70,30 @@ class Gogo():
 
             self.screen.fill([0,0,10])
 
-            space_group.update()
-            space_group.draw(self.screen)
+            self.space_group.update()
+            self.space_group.draw(self.screen)
     
 
             self.clock.tick(10)
             pygame.display.flip()
 
-        pygame.display.quit()
-        if DEBUG: print('end')
-        return
+        print("Out")
+        for event in pygame.event.get():
+            print(event) 
+            
+        print("Quitter")
+        
+        try:
+            pygame.display.quit()
+        except Exception as e:
+            print(e)
+        finally:
+            print("going")
+            
 
 if __name__=='__main__':
     print('boo')
-    DEBUG=False
+    
     g=Gogo()
 
 
