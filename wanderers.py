@@ -22,10 +22,11 @@ class Thing(pygame.sprite.Sprite):
     def update(self):
         self.im += 1
         if self.im>=len(self.images): self.im = 0
-        self.walk()
+        if abs(self.dx)>0.01: self.walk()
 
     def walk(self):
-        self.image = self.images[self.im]
+        if (self.dx<0): self.image = self.images[self.im]
+        if (self.dx>0): self.image = pygame.transform.flip(self.images[self.im],True, False)
         self.mask = pygame.mask.from_surface(self.image)
         self.x += self.dx
         self.y += self.dy
@@ -42,6 +43,7 @@ class Gogo():
     def __init__(self, size=(640, 480)):
         self.size = size
         self.clock = pygame.time.Clock()
+        self.init_controls()
         self.space_group = pygame.sprite.Group()
         self.working = True
         self.thread = threading.Thread(target=self.gogo)
@@ -49,6 +51,16 @@ class Gogo():
 
     def get_working(self):
         return self.working
+
+    def init_controls(self):
+        control = type('control', (object,), { "key": 0, "status": False } )
+        self.controls = type('controls', (object,), { "left": control(), "right": control(), "up": control(), "down": control(), "go": control() })        
+        self.controls.left.key = pygame.K_LEFT
+        self.controls.right.key = pygame.K_RIGHT       
+        self.controls.up.key = pygame.K_UP
+        self.controls.down.key = pygame.K_DOWN
+        self.controls.go.key = pygame.K_SPACE
+        
 
     def gogo(self):
     
@@ -68,9 +80,26 @@ class Gogo():
         while self.get_working():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.working = False
+                    self.working = False 
+                    
+                if event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
+                    if event.key == self.controls.left.key:
+                        self.controls.left.status = event.type == pygame.KEYDOWN 
+                    if event.key == self.controls.right.key:
+                        self.controls.right.status = event.type == pygame.KEYDOWN 
+                    if event.key == self.controls.down.key:
+                        self.controls.down.status = event.type == pygame.KEYDOWN 
+                    if event.key == self.controls.up.key:
+                        self.controls.up.status = event.type == pygame.KEYDOWN 
+                    if event.key == self.controls.go.key:
+                        self.controls.go.status = event.type == pygame.KEYDOWN 
+                        
 
             self.screen.fill([0,0,10])
+            
+            if self.controls.left.status and self.nobby.dx>-4: self.nobby.dx -= 1
+            elif self.controls.right.status and self.nobby.dx<4: self.nobby.dx += 1
+            elif abs(self.nobby.dx)>0: self.nobby.dx = self.nobby.dx * 0.5
 
             self.space_group.update()
             self.space_group.draw(self.screen)    
