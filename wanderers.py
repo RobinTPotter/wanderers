@@ -12,6 +12,8 @@ class Thing(pygame.sprite.Sprite):
         self.im = 0
         self.x = 100
         self.y = 100
+        self.dx = -2
+        self.dy = 0
         self.image = self.images[self.im]
         self.rect=self.image.get_rect()
         self.rect.center = (100, 100)
@@ -25,8 +27,10 @@ class Thing(pygame.sprite.Sprite):
     def walk(self):
         self.image = self.images[self.im]
         self.mask = pygame.mask.from_surface(self.image)
-        #if self.x>0: self.x -= 1
-        #self.rect.move_ip(self.x, self.y)
+        self.x += self.dx
+        self.y += self.dy
+        self.rect.center = (int(self.x), int(self.y))
+        
 
 
 
@@ -47,11 +51,9 @@ class Gogo():
 
     def gogo(self):
     
-    
         print('gogo')
         pygame.init()
         self.screen = pygame.display.set_mode(self.size)
-
 
         self.im = {}
         d = "image/purple"
@@ -71,29 +73,27 @@ class Gogo():
             self.screen.fill([0,0,10])
 
             self.space_group.update()
-            self.space_group.draw(self.screen)
-    
+            self.space_group.draw(self.screen)    
 
             self.clock.tick(10)
             pygame.display.flip()
 
         print("Out")
-        for event in pygame.event.get():
-            print(event) 
-            
-        print("Quitter")
-        
+               
         try:
+            pygame.event.clear()
             pygame.display.quit()
+            pygame.quit()
         except Exception as e:
             print(e)
         finally:
             print("going")
             
+        
+            
 
 if __name__=='__main__':
-    print('boo')
-    
+    print('boo')    
     g=Gogo()
 
 
