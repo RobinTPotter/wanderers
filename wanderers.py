@@ -104,7 +104,7 @@ class Gogo():
             self.space_group.update()
             self.space_group.draw(self.screen)    
 
-            self.clock.tick(10)
+            self.clock.tick(20)
             pygame.display.flip()
 
         print("Out")
