@@ -1,0 +1,10 @@
+res/render.sh 0.7,0.1,0.0 walk/red 1 10
+res/render.sh 0.7,0.1,0.0 jump/red 12 16
+res/render.sh 0.1,0.1,0.8 walk/blue 1 10
+res/render.sh 0.1,0.1,0.8 jump/blue 12 16
+res/render.sh 0.6,0.7,0.0 walk/yellow 1 10
+res/render.sh 0.6,0.7,0.0 jump/yellow 12 16
+res/render.sh 0.1,0.4,0.0 walk/green 1 10
+res/render.sh 0.1,0.4,0.0 jump/green 12 16
+res/render.sh 0.3,0.0,0.6 walk/purple 1 10
+res/render.sh 0.3,0.0,0.6 jump/purple 12 16
