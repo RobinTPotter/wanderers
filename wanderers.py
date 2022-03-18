@@ -20,9 +20,11 @@ class Thing(pygame.sprite.Sprite):
         self.walk()
 
     def update(self):
-        self.im += 1
+        inc = 1 
+        if abs(self.dx)<2: inc=2
+        self.im += inc
         if self.im>=len(self.images): self.im = 0
-        if abs(self.dx)>0.01: self.walk()
+        if abs(self.dx)>0.1: self.walk()
 
     def walk(self):
         if (self.dx<0): self.image = self.images[self.im]
@@ -34,8 +36,13 @@ class Thing(pygame.sprite.Sprite):
         
 
 
+def images(dir):
+    im = {}
+    for i in os.listdir(dir):
+        im[i] = pygame.image.load(f"{dir}/{i}").convert_alpha()
 
-
+    print(im)
+    return [im[i] for i in im]
 
 
 
@@ -68,13 +75,8 @@ class Gogo():
         pygame.init()
         self.screen = pygame.display.set_mode(self.size)
 
-        self.im = {}
-        d = "image/purple"
-        self.im[d] = {}
-        for i in os.listdir(d):
-            self.im[d][i] = pygame.image.load(f"{d}/{i}").convert_alpha()
 
-        self.nobby=Thing([self.im["image/purple"][i] for i in self.im["image/purple"]])
+        self.nobby=Thing(images("image/brown"))
         self.space_group.add(self.nobby)
 
         while self.get_working():
@@ -95,7 +97,7 @@ class Gogo():
                         self.controls.go.status = event.type == pygame.KEYDOWN 
                         
 
-            self.screen.fill([0,0,10])
+            self.screen.fill([20,20,20])
             
             if self.controls.left.status and self.nobby.dx>-4: self.nobby.dx -= 1
             elif self.controls.right.status and self.nobby.dx<4: self.nobby.dx += 1
