@@ -26,6 +26,11 @@ class Thing(pygame.sprite.Sprite):
         if self.im>=len(self.images): self.im = 0
         if abs(self.dx)>0.1: self.walk()
 
+    def move(self, left, right):    
+        if left and self.dx>-4: self.dx -= 1
+        elif right and self.dx<4: self.dx += 1
+        elif abs(self.dx)>0: self.dx = self.dx * 0.5
+
     def walk(self):
         if (self.dx<0): self.image = self.images[self.im]
         if (self.dx>0): self.image = pygame.transform.flip(self.images[self.im],True, False)
@@ -75,9 +80,24 @@ class Gogo():
         pygame.init()
         self.screen = pygame.display.set_mode(self.size)
 
+        ims = []
+        ims.append(images("image/walk/blue"))
+        ims.append(images("image/walk/yellow"))
+        ims.append(images("image/walk/green"))
+        
+        self.nobbies = []
+        import random
+        
+        for _ in range(6):
+            for __ in range(random.randint(1,3)):
+                nob = Thing(ims[random.randint(0,len(ims)-1)])
+                nob.y = (1 + _ ) * 64
+                nob.x = random.randint(0,self.size[0])
+                self.nobbies.append(nob)
+                self.space_group.add(nob)
 
-        self.nobby=Thing(images("image/brown"))
-        self.space_group.add(self.nobby)
+        
+        
 
         while self.get_working():
             for event in pygame.event.get():
@@ -99,10 +119,18 @@ class Gogo():
 
             self.screen.fill([20,20,20])
             
-            if self.controls.left.status and self.nobby.dx>-4: self.nobby.dx -= 1
-            elif self.controls.right.status and self.nobby.dx<4: self.nobby.dx += 1
-            elif abs(self.nobby.dx)>0: self.nobby.dx = self.nobby.dx * 0.5
-
+            
+            #self.nobby.move(self.controls.left.status,self.controls.right.status)
+            for nobby in self.nobbies:
+                if nobby.dx<0 and nobby.x<0:
+                    nobby.x=0
+                    nobby.dx=1
+                elif nobby.x>self.size[0] and nobby.dx>0:
+                    nobby.x=self.size[0]
+                    nobby.dx=-1
+                    
+                nobby.move(nobby.dx<0, nobby.dx>0)
+            
             self.space_group.update()
             self.space_group.draw(self.screen)    
 
