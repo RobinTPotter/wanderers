@@ -77,6 +77,19 @@ class Gogo():
         self.controls.go.key = pygame.K_SPACE
         
 
+    def collide(self, group, callback=None):    
+            for s1 in group.sprites():
+                for s2 in group.sprites():
+                    if s1.id>s2.id and pygame.sprite.collide_rect(s1,s2):
+                        point = pygame.sprite.collide_mask(s1,s2)
+                        if point is not None:
+                            callback(s1,s2,point)
+
+    def action(self,s1,s2,point):
+        print(s1,s2,point)
+        s1.dx = -s1.dx
+        s2.dx = -s2.dx
+
     def gogo(self):
     
         print('gogo')
@@ -87,19 +100,30 @@ class Gogo():
         ims.append(images("image/walk/blue"))
         ims.append(images("image/walk/yellow"))
         ims.append(images("image/walk/green"))
+        ims.append(images("image/walk/purple"))
+        ims.append(images("image/walk/red"))
         
         self.nobbies = []
         import random
         
         for _ in range(6):
-            for __ in range(random.randint(1,3)):
+            for __ in range(random.randint(3,8)):
                 nob = Thing(ims[random.randint(0,len(ims)-1)], id=__)
                 nob.im = random.randint(0,len(ims[0]))
-                nob.y = (1 + _ ) * 64
-                nob.x = random.randint(0,self.size[0])
+                nob.y = 32 + _ * self.size[1]/6
+                nob.x = None
+                while (nob.x is None):
+                    nob.x = random.randint(0,self.size[0])
+                    tc = [d for d in [abs(nob.x-n.x) for n in self.nobbies if nob.y==n.y] if d<30]
+                    if len(tc)>0:
+                        print(f"{nob} touching {tc}")
+                        nob.x = None
+                   
+                    
                 self.nobbies.append(nob)
                 self.space_group.add(nob)
 
+        
         
         
 
@@ -135,14 +159,7 @@ class Gogo():
                     
                 nobby.move(nobby.dx<0, nobby.dx>0)
                 
-            for s1 in self.space_group.sprites():
-                for s2 in self.space_group.sprites():
-                    if s1.id>s2.id and pygame.sprite.collide_rect(s1,s2):
-                        point = pygame.sprite.collide_mask(s1,s2)
-                        if point is not None:
-                            print(s1,s2,point)
-                            s1.dx = -s1.dx
-                            s2.dx = -s2.dx
+            self.collide(self.space_group, callback=self.action)
             
             self.space_group.update()
             self.space_group.draw(self.screen)    
