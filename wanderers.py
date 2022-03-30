@@ -6,7 +6,7 @@ import os
 
 
 class Thing(pygame.sprite.Sprite):
-    def __init__(self, ims):
+    def __init__(self, ims, id=None):
         pygame.sprite.Sprite.__init__(self)
         self.images = ims
         self.im = 0
@@ -18,6 +18,7 @@ class Thing(pygame.sprite.Sprite):
         self.rect=self.image.get_rect()
         self.rect.center = (100, 100)
         self.walk()
+        self.id = id
 
     def update(self):
         inc = 1 
@@ -38,7 +39,9 @@ class Thing(pygame.sprite.Sprite):
         self.x += self.dx
         self.y += self.dy
         self.rect.center = (int(self.x), int(self.y))
-        
+    
+    def __repr__(self):
+        return f"{self.id}"
 
 
 def images(dir):
@@ -90,7 +93,8 @@ class Gogo():
         
         for _ in range(6):
             for __ in range(random.randint(1,3)):
-                nob = Thing(ims[random.randint(0,len(ims)-1)])
+                nob = Thing(ims[random.randint(0,len(ims)-1)], id=__)
+                nob.im = random.randint(0,len(ims[0]))
                 nob.y = (1 + _ ) * 64
                 nob.x = random.randint(0,self.size[0])
                 self.nobbies.append(nob)
@@ -130,6 +134,15 @@ class Gogo():
                     nobby.dx=-1
                     
                 nobby.move(nobby.dx<0, nobby.dx>0)
+                
+            for s1 in self.space_group.sprites():
+                for s2 in self.space_group.sprites():
+                    if s1.id>s2.id and pygame.sprite.collide_rect(s1,s2):
+                        point = pygame.sprite.collide_mask(s1,s2)
+                        if point is not None:
+                            print(s1,s2,point)
+                            s1.dx = -s1.dx
+                            s2.dx = -s2.dx
             
             self.space_group.update()
             self.space_group.draw(self.screen)    
